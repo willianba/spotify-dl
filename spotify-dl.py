@@ -86,7 +86,7 @@ def getTrackName(id, access_token):
     tmp = proc.stdout.read()
     data = json.loads(tmp)
     if 'error' in data:
-        print ERROR + "can't found song name"
+        print ERROR + "Can't found song name"
         print ERROR + data['error']['message']
         return None
     else:
