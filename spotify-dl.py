@@ -19,7 +19,7 @@ DEFAULT = "\033[0m"
 
 ACTION  = BLUE + "[+] " + DEFAULT
 ERROR   = RED + "[+] " + DEFAULT
-OK      =  GREEN + "[+] " + DEFAULT
+OK      = GREEN + "[+] " + DEFAULT
 
 #=======================
 #   Spotify application
@@ -27,10 +27,10 @@ OK      =  GREEN + "[+] " + DEFAULT
 CLIENT_ID="REPLACE_HERE"
 # The callback can be http://127.0.0.1
 CALL_BACK_URL="REPLACE_HERE"
+ACCESS_TOKEN="REPLACE_HERE"
 
 # Set DEVELOPER_KEY to the API key value from the APIs & auth > Registered apps
-# tab of
-#   https://cloud.google.com/console
+# tab of https://cloud.google.com/console
 # Please ensure that you have enabled the YouTube Data API for your project.
 DEVELOPER_KEY = "REPLACE_HERE"
 YOUTUBE_API_SERVICE_NAME = "youtube"
@@ -131,15 +131,9 @@ def downloadYoutube(link):
     tmp = proc.stdout.read()
     print OK + "Song Downloaded"
 
-def rename_songs(path):
-    filenames = os.listdir(path)
-    for filename in filenames:
-        new_name = filename.split('-')[0] + "-" + filename.split('-')[1] + ".mp3"
-        os.rename(path + "/" + filename, path + "/" + new_name)
-
 def header():
     """ header informations """
-    print RED + "@ spotify-dl.py version 0.0.4"
+    print RED + "@ spotify-dl.py version 0.0.5"
     print YELLOW + "@ author : Naper"
     print BLUE + "@ Designed for OSx/linux"
     print "" + DEFAULT
@@ -148,14 +142,10 @@ def header():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='spotify-dl allows you to download your spotify songs')
     parser.add_argument('--verbose', action='store_true', help='verbose flag')
-    parser.add_argument('--dl', nargs=1, help="set the download methode")
-    parser.add_argument('--user', nargs=1, help="set the spotify login")
-    parser.add_argument('--password', nargs=1, help="set the spotify password")
     parser.add_argument('--traceback', action='store_true', help="enable traceback")
     parser.add_argument('--gen_url', action='store_true', help="generate url for getting access_token")
     parser.add_argument('--track', nargs=1, help="spotify track id")
-    parser.add_argument('--playlist', nargs=2, help="spotify playlist's user and link")
-    parser.add_argument('--access_token', nargs=1, help="set the access_token")
+    parser.add_argument('--playlist', nargs=2, help="spotify playlist user id and link")
     parser.add_argument('--folder', nargs=1, help="set output folder")
     parser.add_argument('-m', nargs=1, help="set a methode")
 
@@ -169,28 +159,27 @@ if __name__ == "__main__":
         if args.gen_url:
             genUrl()
         else:
-            if args.dl and args.access_token and args.dl[0] == 'youtube':
-                if args.track:
-                    name = getTrackName(args.track[0], args.access_token[0])
-                    link = searchYoutube(name)
-                    downloadYoutube(link)
-                elif args.playlist:
-                    names = getPlaylistSongs(args.playlist[0], args.playlist[1], args.access_token[0])
-                    for song in names:
-                        if song != None:
-                            print OK + "Name is " + song
-                            link = searchYoutube(song)
-                            downloadYoutube(link)
-                if args.folder:
-                    if not os.path.isdir(args.folder[0]):
-                        create_folder = 'mkdir "'+ args.folder[0] +'"'
-                        os.system(create_folder)
-                    move = 'mv *.mp3 ' + os.getcwd() + '/' + args.folder[0]
-                    os.system(move)
-                    rename_songs(args.folder[0])
+            if args.track:
+                name = getTrackName(args.track[0], ACCESS_TOKEN)
+                link = searchYoutube(name)
+                downloadYoutube(link)
+            elif args.playlist:
+                names = getPlaylistSongs(args.playlist[0], args.playlist[1], ACCESS_TOKEN)
+                for song in names:
+                    if song != None:
+                        print OK + "Name is " + song
+                        link = searchYoutube(song)
+                        downloadYoutube(link)
+            if args.folder:
+                if not os.path.isdir(args.folder[0]):
+                    create_folder = 'mkdir "'+ args.folder[0] +'"'
+                    os.system(create_folder)
+                move = 'mv *.mp3 ' + os.getcwd() + '/' + args.folder[0]
+                os.system(move)
+                rename_songs(args.folder[0])
             else:
                 print ERROR + "Use --help for help"
     except Exception, err:
-        print ERROR + "An HTTP error occurred\n"
+        print ERROR + "An error occurred\n"
         if args.traceback:
             traceback.print_exc()

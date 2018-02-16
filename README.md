@@ -11,15 +11,15 @@ This repo was forked from [Hamza Bourrahim](https://github.com/invicnaper) and m
 
 ### What is this repository for? ###
 
-* spotify-dl allows you to download spotify songs or playlist
-* Version 0.0.4
+* spotify-dl allows you to download spotify songs or playlists
+* Version 0.0.5
 * This repo contains spotify-dl source code
 
 ### Screen ###
 
-![alt text](http://nsa37.casimages.com/img/2016/02/13/160213111903934479.png "spotfy-dl screen")
+![alt text](http://nsa37.casimages.com/img/2016/02/13/160213111903934479.png "spotify-dl screen")
 
-# How to Install ?
+# How to Install?
 To use spotify-dl, you need to install thoses packages :
   * bs4
   * youtube-dl
@@ -43,46 +43,67 @@ And pip to install bs4:
     $ pip install beautifulsoup4
 
 # Spotify API
-The new version of the spotify api require an access_token for requests you can check out https://developer.spotify.com/migration-guide-for-unauthenticated-web-api-calls/.
-
-The new patch of spotify-dl have a new argument called: --access_token, so the new usage of spotify-dl would be:
+The new version of the spotify API require an access token for requests. You can check out https://developer.spotify.com/migration-guide-for-unauthenticated-web-api-calls/.
   
-    $ ./spotify-dl --track {spotify_song_id} --dl youtube --access_token <your_access_token>
-    
-You can get the access token from the url generated while executing: 
+The easy way to get an access token is at https://developer.spotify.com/web-api/console/get-playlist-tracks/. Just click 'generate OAuth token' and copy it.
 
-    $ ./spotify-dl --gen_url 
-    
-You also have to create an application on https://developer.spotify.com/.
+You can also get the access token from the url generated while executing: 
 
-Or you can get one on https://developer.spotify.com/web-api/console/get-playlist-tracks/, just click 'generate oauth token' and copy it.
+    $ ./spotify-dl.py --gen_url 
+    
+You must have to create an application on https://developer.spotify.com/.
+
+To get the developer key, go to https://cloud.google.com/console, create an application and get the API key value from the APIs & auth > Registered apps. Please ensure that you have enabled the YouTube Data API for your project.
 
 Then, change:
 
     CLIENT_ID="spotify-app-id"
     CALL_BACK_URL="url"
+    ACCESS_TOKEN="token"
     DEVELOPER_KEY="youtube-api-key"
 
-# How to use ?
-You can either use your spotify account or downloading single track or playlist by providing an ID. Ex.:
+# How to use?
+## Tracks
+You can download a single track by providing an ID. Ex.:
 
-    $ ./spotify-dl --track {spotify_song_id} --dl youtube
+    $ ./spotify-dl.py --track {spotify_song_id}
     
-This will download the track and save it as mp3 format
+This will download the track and save it as mp3 format.
 
-You can get the song ID by getting the spotify URI of the song
+You can get the song ID by getting the spotify URI of the song:
 
-{spotify_song_id_ex} : 28Ct4qwkQXY2W5yyNCLuVI
+Spotify URI: spotify:track:2iuZJX9X9P0GKaE93xcPjk
 
-You can download an entire playlist by providing the playlist's user and link:
+The song ID will be: 2iuZJX9X9P0GKaE93xcPjk
 
-    $ ./spotify-dl --playlist {spotify_playlist_link} --user {playlist_user} --dl youtube --access_token <your_access_token>
+## Playlists 
+You can download an entire playlist by providing its user and ID:
+
+    $ ./spotify-dl.py --playlist {playlist_user_id} {playlist_id}
 
 If you want to set an output folder, you can do it providing the folder name between "". Ex.:
 
-    $ ./spotify-dl --playlist {spotify_playlist_link} --user {playlist_user} --dl youtube --access_token <your_access_token> --folder {"folder name"}
+    $ ./spotify-dl.py --playlist {playlist_user_id} {playlist_id} --folder {"folder name"}
 
+Ex.:
+
+Spotify URI: spotify:user:spotify:playlist:37i9dQZF1DZ06evO1c6rSg
+
+The user is: spotify
+
+The playlist ID is: 37i9dQZF1DZ06evO1c6rSg
+
+The usage is:
+
+	$ ./spotify-dl.py --playlist spotify 37i9dQZF1DZ06evO1c6rSg
+
+## Access Tokens
+Sometimes the access tokens get expired, causing the script to show "An error occurred".
+
+This way, it is necessary a **new access token** in order to properly use Spotify API.
+
+### Author ###
+* Hamza Bourrahim
 
 ### Contributors ###
-* Hamza Bourrahim
 * Willian Alves
