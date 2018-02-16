@@ -12,7 +12,7 @@ This repo was forked from [Hamza Bourrahim](https://github.com/invicnaper) and m
 ### What is this repository for? ###
 
 * spotify-dl allows you to download spotify songs or playlist
-* Version 0.0.3
+* Version 0.0.4
 * This repo contains spotify-dl source code
 
 ### Screen ###

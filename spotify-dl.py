@@ -25,6 +25,7 @@ OK      =  GREEN + "[+] " + DEFAULT
 #   Spotify application
 #=======================
 CLIENT_ID="REPLACE_HERE"
+# The callback can be http://127.0.0.1
 CALL_BACK_URL="REPLACE_HERE"
 
 # Set DEVELOPER_KEY to the API key value from the APIs & auth > Registered apps
@@ -80,7 +81,7 @@ def searchYoutube(trackname):
 
 def getTrackName(id, access_token):
     """ get the spotify track name from id """
-    print ACTION + "getting track name"
+    print ACTION + "Getting track name"
     proc = subprocess.Popen('curl -sS -X GET "https://api.spotify.com/v1/tracks/'+ id +'?market=ES" -H "Authorization: Bearer '+ access_token +'"', shell=True, stdout=subprocess.PIPE)
     tmp = proc.stdout.read()
     data = json.loads(tmp)
@@ -89,19 +90,19 @@ def getTrackName(id, access_token):
         print ERROR + data['error']['message']
         return None
     else:
-        print OK + "name is " + data["name"]
+        print OK + "Name is " + data["name"]
         return data["name"]
 
 def getPlaylistSongs(user, playlist, access_token):
     """ get the spotify tracks names from playlist link """
-    print ACTION + "getting tracks names"
+    print ACTION + "Getting tracks names"
     proc = subprocess.Popen('curl -sS -X GET "https://api.spotify.com/v1/users/' + user + '/playlists/' + playlist + '/tracks?market=ES&fields=items(track)" -H "Authorization: Bearer '+ access_token +'"', shell=True, stdout=subprocess.PIPE)
     tmp = proc.stdout.read()
     data = json.loads(tmp)
     names = []
     for item in data['items']:
         if 'error' in data:
-            print ERROR + "can't found song name"
+            print ERROR + "Can't found song name"
             print ERROR + data['error']['message']
             return None
         else:
@@ -111,12 +112,12 @@ def getPlaylistSongs(user, playlist, access_token):
 
 def genUrl():
     """ gen url for getting access token """
-    print ACTION + "generating url for access token"
+    print ACTION + "Generating url for access token"
     print OK +  "https://accounts.spotify.com/authorize?client_id="+ CLIENT_ID + "&response_type=token&redirect_uri=" + CALL_BACK_URL
 
 def getAccessToken():
     """ get access token """
-    print ACTION + " getting access token"
+    print ACTION + "Getting access token"
     proc = subprocess.Popen('curl -sS -X GET "https://accounts.spotify.com/authorize?client_id='+ CLIENT_ID +'&response_type=token&redirect_uri='+ CALL_BACK_URL +'" -H "Accept: application/json"', shell=True, stdout=subprocess.PIPE)
     tmp = proc.stdout.read()
     data = json.loads(tmp)
@@ -125,8 +126,8 @@ def getAccessToken():
 
 def downloadYoutube(link):
     """ downloading the track """
-    print ACTION + "downloading song .."
-    proc = subprocess.Popen('youtube-dl --extract-audio --audio-format mp3 '+ link, shell=True, stdout=subprocess.PIPE)
+    print ACTION + "Downloading song"
+    proc = subprocess.Popen('youtube-dl -x --format best --audio-format=mp3 --audio-quality=0 -o %\(title\)s.%\(ext\)s '+ link, shell=True, stdout=subprocess.PIPE)
     tmp = proc.stdout.read()
     print OK + "Song Downloaded"
 
@@ -138,7 +139,7 @@ def rename_songs(path):
 
 def header():
     """ header informations """
-    print RED + "@ spotify-dl.py version 0.0.3"
+    print RED + "@ spotify-dl.py version 0.0.4"
     print YELLOW + "@ author : Naper"
     print BLUE + "@ Designed for OSx/linux"
     print "" + DEFAULT
@@ -177,7 +178,7 @@ if __name__ == "__main__":
                     names = getPlaylistSongs(args.playlist[0], args.playlist[1], args.access_token[0])
                     for song in names:
                         if song != None:
-                            print OK + "name is " + song
+                            print OK + "Name is " + song
                             link = searchYoutube(song)
                             downloadYoutube(link)
                 if args.folder:
@@ -188,7 +189,7 @@ if __name__ == "__main__":
                     os.system(move)
                     rename_songs(args.folder[0])
             else:
-                print ERROR + "use --help for help"
+                print ERROR + "Use --help for help"
     except Exception, err:
         print ERROR + "An HTTP error occurred\n"
         if args.traceback:
